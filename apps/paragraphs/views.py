@@ -3,8 +3,6 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .models import Paragraph, WordFrequency
 
-
-# 🔹 Upload API
 class ParagraphUploadView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -14,31 +12,27 @@ class ParagraphUploadView(APIView):
         if not text:
             return Response({"error": "Text is required"}, status=400)
 
-        paragraphs = text.split("\n\n")
+        paragraphs = [p.strip() for p in text.split("\n\n") if p.strip()]
 
         for para in paragraphs:
-            para_obj = Paragraph.objects.create(
+            Paragraph.objects.create(
                 user=request.user,
                 text=para
             )
 
-            words = para.split()
+            words = para.lower().split()
 
             for word in words:
-                word = word.lower()
-
                 obj, created = WordFrequency.objects.get_or_create(
                     user=request.user,
                     word=word
                 )
-
                 obj.count += 1
                 obj.save()
 
-        return Response({"message": "Paragraphs processed successfully"})
+        return Response({"message": "Paragraphs processed successfully"}, status=201)
 
 
-# 🔥 STEP 5 → ADD THIS BELOW
 class SearchWordView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -48,7 +42,7 @@ class SearchWordView(APIView):
         if not word:
             return Response({"error": "Word is required"}, status=400)
 
-        word = word.lower()
+        word = word.lower().strip()
 
         paragraphs = Paragraph.objects.filter(
             user=request.user,
@@ -57,15 +51,18 @@ class SearchWordView(APIView):
 
         ranked = sorted(
             paragraphs,
-            key=lambda p: p.text.lower().count(word),
+            key=lambda p: p.text.lower().split().count(word),
             reverse=True
         )
 
         top_10 = ranked[:10]
 
         result = [
-            {"id": p.id, "text": p.text}
+            {
+                "id": p.id,
+                "text": p.text
+            }
             for p in top_10
         ]
 
-        return Response(result)
+        return Response(result, status=200)
