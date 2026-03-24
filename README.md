@@ -1,4 +1,3 @@
-```md
 # LexiRank – Paragraph Intelligence Engine
 
 A scalable Django-based backend system that processes user-submitted paragraphs, computes word frequencies, and retrieves the most relevant paragraphs using efficient ranking.
@@ -12,7 +11,7 @@ A scalable Django-based backend system that processes user-submitted paragraphs,
 - Word-based paragraph ranking (Top 10 results)
 - Asynchronous processing using Celery
 - Redis as message broker
-- Dockerized setup (ready)
+- Dockerized setup
 
 ---
 
@@ -29,96 +28,84 @@ A scalable Django-based backend system that processes user-submitted paragraphs,
 ## Project Structure
 
 ```
-
 LexiRank/
-│
 ├── apps/
 │   ├── users/
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── apps.py
+│   │
 │   ├── paragraphs/
+│   │   ├── models.py
+│   │   ├── views.py
+│   │   ├── tasks.py
+│   │   ├── serializers.py
+│   │   ├── urls.py
+│   │   └── apps.py
 │
 ├── config/
+│   ├── __init__.py
 │   ├── settings.py
+│   ├── urls.py
 │   ├── celery.py
+│   └── wsgi.py
 │
 ├── docker/
 ├── scripts/
 ├── manage.py
-
+├── requirements.txt
+└── README.md
 ```
 
 ---
 
 ## Setup Instructions
 
-### 1️Clone Repository
+### 1. Clone Repository
 
 ```
-
 git clone https://github.com/RealCifer/LexiRank.git
 cd LexiRank
-
 ```
 
----
-
-### 2️Create Virtual Environment
+### 2. Create Virtual Environment
 
 ```
-
 python -m venv venv
 venv\Scripts\activate
-
 ```
 
----
-
-### 3️Install Dependencies
+### 3. Install Dependencies
 
 ```
-
 pip install -r requirements.txt
-
 ```
 
----
-
-### 4️Run Migrations
+### 4. Run Migrations
 
 ```
-
 python manage.py makemigrations
 python manage.py migrate
-
 ```
 
----
-
-### 5️Run Server
+### 5. Run Server
 
 ```
-
 python manage.py runserver
-
 ```
 
----
-
-### 6️Start Redis
+### 6. Start Redis
 
 ```
-
 docker run -d -p 6379:6379 redis
-
 ```
 
----
-
-### 7️Start Celery Worker (Windows)
+### 7. Start Celery Worker (Windows)
 
 ```
-
 celery -A config worker -l info --pool=solo
-
 ```
 
 ---
@@ -126,17 +113,15 @@ celery -A config worker -l info --pool=solo
 ## Authentication APIs
 
 ### Register
+
 ```
-
 POST /api/users/register/
-
 ```
 
 ### Login
+
 ```
-
 POST /api/users/login/
-
 ```
 
 ---
@@ -144,25 +129,22 @@ POST /api/users/login/
 ## Paragraph APIs
 
 ### Upload Paragraphs
-```
 
+```
 POST /api/paragraphs/upload/
-
 ```
 
-**Headers**
+Headers:
 ```
-
 Authorization: Bearer <access_token>
+```
 
-````
-
-**Body**
+Body:
 ```json
 {
   "text": "Hello world\n\nHello again world"
 }
-````
+```
 
 ---
 
@@ -184,16 +166,13 @@ Client → Django API → Celery → Redis → Worker → Database
 
 ## Key Highlights
 
-* Implemented custom user model
-* Optimized word frequency tracking
-* Used asynchronous task queue for scalability
-* Designed clean and modular backend architecture
+- Custom user model implementation
+- Efficient word frequency tracking
+- Asynchronous processing using Celery
+- Modular and scalable backend design
 
 ---
 
 ## Author
 
 Aditya Khamait
-
-```
-```
